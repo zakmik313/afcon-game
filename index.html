@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AFCON Football Legends 2025</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #ecf0f1;
+            min-height: 100vh;
+            padding: 20px;
+            background-attachment: fixed;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #16213e 0%, #0f3460 100%);
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+            border-left: 4px solid #e67e22;
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #f39c12;
+            margin-bottom: 20px;
+            font-size: 32px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+        }
+
+        .stat-box {
+            text-align: center;
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #208090;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #95a5a6;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #f39c12;
+        }
+
+        .game-modes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .mode-btn {
+            background: linear-gradient(135deg, #208090 0%, #3498db 100%);
+            border: 2px solid #e67e22;
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .mode-btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(232, 126, 34, 0.4);
+        }
+
+        .mode-btn.active {
+            background: linear-gradient(135deg, #e67e22 0%, #f39c12 100%);
+            border-color: #f39c12;
+        }
+
+        .mode-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .mode-name {
+            font-size: 14px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .game-area {
+            background: linear-gradient(135deg, #16213e 0%, #0f3460 100%);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+            border: 1px solid #208090;
+        }
+
+        .nation-selector {
+            width: 100%;
+            padding: 12px;
+            background: rgba(0,0,0,0.3);
+            border: 2px solid #208090;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .nation-selector option {
+            background: #1a1a2e;
+            color: white;
+        }
+
+        .pitch {
+            width: 100%;
+            height: 280px;
+            background: linear-gradient(180deg, #2ecc71 0%, #27ae60 100%);
+            border: 4px solid #f39c12;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 20px;
+            cursor: crosshair;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pitch::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            top: 50%;
+            left: 0;
+            background: white;
+            opacity: 0.3;
+        }
+
+        .pitch::after {
+            content: '';
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 50%;
+        }
+
+        .keeper {
+            font-size: 48px;
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: transform 0.2s;
+        }
+
+        .keeper.save {
+            animation: saveAnimation 0.5s;
+        }
+
+        @keyframes saveAnimation {
+            0% { transform: translateX(-50%) translateY(0) scaleX(1); }
+            25% { transform: translateX(-50%) translateY(-15px) scaleX(0.8); }
+            50% { transform: translateX(-50%) translateY(-8px) scaleX(1.1); }
+            100% { transform: translateX(-50%) translateY(0) scaleX(1); }
+        }
+
+        .ball {
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            background: radial-gradient(circle at 30% 30%, #ffffff, #222);
+            border-radius: 50%;
+            bottom: 35px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.5);
+        }
+
+        .power-label {
+            font-size: 12px;
+            color: #95a5a6;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .power-meter {
+            width: 100%;
+            height: 25px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid #208090;
+            margin-bottom: 15px;
+        }
+
+        .power-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #208090, #e67e22, #e74c3c);
+            width: 0%;
+            transition: width 0.05s linear;
+        }
+
+        .shoot-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #e67e22 0%, #f39c12 100%);
+            color: white;
+            border: 3px solid #f39c12;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(232, 126, 34, 0.3);
+            margin-bottom: 15px;
+        }
+
+        .shoot-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(232, 126, 34, 0.5);
+        }
+
+        .shoot-btn:active {
+            transform: scale(0.98);
+        }
+
+        .result-message {
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 15px;
+            display: none;
+            animation: slideIn 0.3s;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-message.show {
+            display: block;
+        }
+
+        .result-message.goal {
+            background: rgba(39, 174, 96, 0.2);
+            color: #27ae60;
+            border: 2px solid #27ae60;
+        }
+
+        .result-message.miss {
+            background: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+            border: 2px solid #e74c3c;
+        }
+
+        .result-message.great {
+            background: rgba(243, 156, 18, 0.2);
+            color: #f39c12;
+            border: 2px solid #f39c12;
+            font-size: 18px;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .panel {
+            background: linear-gradient(135deg, #16213e 0%, #0f3460 100%);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+            border: 1px solid #208090;
+        }
+
+        .panel-title {
+            color: #f39c12;
+            margin-bottom: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            border-bottom: 2px solid #e67e22;
+            padding-bottom: 10px;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            font-size: 12px;
+        }
+
+        .leaderboard-item:last-child {
+            border-bottom: none;
+        }
+
+        .rank-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, #208090, #3498db);
+            color: white;
+            border-radius: 50%;
+            font-weight: bold;
+            font-size: 11px;
+            margin-right: 8px;
+        }
+
+        .rank-badge.gold {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+        }
+
+        .rank-badge.silver {
+            background: linear-gradient(135deg, #c0c0c0, #a9a9a9);
+        }
+
+        .rank-badge.bronze {
+            background: linear-gradient(135deg, #cd7f32, #b87333);
+        }
+
+        .player-name {
+            flex: 1;
+            margin-left: 8px;
+        }
+
+        .player-coins {
+            font-weight: bold;
+            color: #f39c12;
+        }
+
+        .pack-btn {
+            background: rgba(0,0,0,0.2);
+            border: 2px solid #3498db;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .pack-btn:hover {
+            background: #3498db;
+            transform: translateY(-2px);
+        }
+
+        .pack-price {
+            font-size: 12px;
+            color: #f39c12;
+            margin-top: 4px;
+        }
+
+        .payment-btn {
+            background: #208090;
+            border: none;
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            transition: all 0.3s;
+        }
+
+        .payment-btn:hover {
+            background: #e67e22;
+        }
+
+        .footer {
+            background: linear-gradient(135deg, #16213e 0%, #0f3460 100%);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 12px;
+            border-top: 3px solid #e67e22;
+        }
+
+        .streak-display {
+            background: linear-gradient(135deg, rgba(243, 156, 18, 0.2) 0%, rgba(232, 126, 34, 0.2) 100%);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px dashed #f39c12;
+            margin-bottom: 15px;
+        }
+
+        .streak-number {
+            font-size: 28px;
+            font-weight: bold;
+            color: #f39c12;
+        }
+
+        .streak-label {
+            font-size: 12px;
+            color: #95a5a6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚽ AFCON Football Legends 2025</h1>
+            <div class="stats-row">
+                <div class="stat-box">
+                    <div class="stat-label">Total Coins</div>
+                    <div class="stat-value" id="totalCoins">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Cards</div>
+                    <div class="stat-value" id="cardsOwned">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Win Streak</div>
+                    <div class="stat-value" id="winStreak">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Global Rank</div>
+                    <div class="stat-value" id="globalRank">#--</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="game-modes">
+            <button class="mode-btn active" onclick="switchMode('penalties')">
+                <div class="mode-icon">⚽</div>
+                <div class="mode-name">Penalties</div>
+            </button>
+            <button class="mode-btn" onclick="switchMode('freekicks')">
+                <div class="mode-icon">🎯</div>
+                <div class="mode-name">Free Kicks</div>
+            </button>
+            <button class="mode-btn" onclick="switchMode('corners')">
+                <div class="mode-icon">🔺</div>
+                <div class="mode-name">Corners</div>
+            </button>
+        </div>
+
+        <div class="main-content">
+            <div class="game-area">
+                <select class="nation-selector" id="nationSelect" onchange="selectNation(this.value)">
+                    <option value="">🌍 Select Your Nation</option>
+                    <option value="🇪🇬">🇪🇬 Egypt</option>
+                    <option value="🇸🇳">🇸🇳 Senegal</option>
+                    <option value="🇲🇦">🇲🇦 Morocco</option>
+                    <option value="🇳🇬">🇳🇬 Nigeria</option>
+                    <option value="🇨🇮">🇨🇮 Ivory Coast</option>
+                    <option value="🇹🇳">🇹🇳 Tunisia</option>
+                    <option value="🇦🇱">🇦🇱 Algeria</option>
+                    <option value="🇨🇲">🇨🇲 Cameroon</option>
+                    <option value="🇲🇱">🇲🇱 Mali</option>
+                    <option value="🇿🇦">🇿🇦 South Africa</option>
+                    <option value="🇧🇫">🇧🇫 Burkina Faso</option>
+                    <option value="🇨🇩">🇨🇩 DR Congo</option>
+                    <option value="🇬🇭">🇬🇭 Ghana</option>
+                    <option value="🇬🇦">🇬🇦 Gabon</option>
+                    <option value="🇰🇪">🇰🇪 Kenya</option>
+                    <option value="🇺🇬">🇺🇬 Uganda</option>
+                    <option value="🇹🇿">🇹🇿 Tanzania</option>
+                    <option value="🇬🇳">🇬🇳 Guinea</option>
+                    <option value="🇿🇲">🇿🇲 Zambia</option>
+                    <option value="🇿🇼">🇿🇼 Zimbabwe</option>
+                    <option value="🇦🇴">🇦🇴 Angola</option>
+                    <option value="🇧🇯">🇧🇯 Benin</option>
+                    <option value="🇪🇬">🇪🇬 Sudan</option>
+                    <option value="🇬🇶">🇬🇶 Equatorial Guinea</option>
+                </select>
+
+                <div class="pitch" id="pitch" style="display:none;">
+                    <div class="keeper" id="keeper">🧤</div>
+                    <div class="ball"></div>
+                </div>
+
+                <div style="display:none;" id="gameContainer">
+                    <div style="color: #f39c12; text-align: center; margin-bottom: 12px; font-size: 12px;">
+                        ⏱️ Penalty <span id="penaltyNumber">1</span>/3
+                    </div>
+
+                    <div class="power-label">⚡ Power Meter</div>
+                    <div class="power-meter">
+                        <div class="power-fill" id="powerFill"></div>
+                    </div>
+
+                    <button class="shoot-btn" id="shootBtn" onmousedown="chargeStart()" onmouseup="chargeEnd()" ontouchstart="chargeStart()" ontouchend="chargeEnd()">
+                        ⚡ SHOOT (Hold & Release)
+                    </button>
+
+                    <div class="result-message" id="resultMessage"></div>
+
+                    <div style="color: #f39c12; text-align: center; font-weight: bold; font-size: 16px; margin-top: 20px;">
+                        <span id="myScore">0</span> - <span id="oppScore">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <div class="panel">
+                    <div class="panel-title">🔥 Your Streak</div>
+                    <div class="streak-display">
+                        <div class="streak-number" id="streakNum">0</div>
+                        <div class="streak-label">Current Win Streak</div>
+                    </div>
+                    <div style="font-size: 12px; color: #95a5a6; line-height: 1.8;">
+                        <div>5-Win: Free Pack</div>
+                        <div>10-Win: +100 bonus</div>
+                        <div>20-Win: Mythic Card!</div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-title">📦 Pack Store</div>
+                    <div class="pack-btn" onclick="openPayment('stripe', 2)">
+                        Standard Pack
+                        <div class="pack-price">$2 USD</div>
+                    </div>
+                    <div class="pack-btn" onclick="openPayment('stripe', 5)">
+                        Premium Pack
+                        <div class="pack-price">$5 USD</div>
+                    </div>
+                    <div class="pack-btn" onclick="openPayment('stripe', 15)">
+                        Elite Pack
+                        <div class="pack-price">$15 USD</div>
+                    </div>
+
+                    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1);">
+                        <div style="font-size: 11px; color: #95a5a6; margin-bottom: 10px; font-weight: bold;">💳 Payment Methods:</div>
+                        <button class="payment-btn" onclick="openPayment('stripe', 2)">Stripe (Card)</button>
+                        <button class="payment-btn" onclick="openPayment('binance', 2)">Binance Pay</button>
+                        <button class="payment-btn" onclick="openPayment('revolut', 2)">Revolut</button>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-title">🏆 Top 5 Players</div>
+                    <div id="leaderboardList"></div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-title">💰 Rewards</div>
+                    <div style="font-size: 12px; color: #ecf0f1; line-height: 1.8;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <span>Win:</span>
+                            <span style="color: #27ae60;">+100 coins</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <span>Loss:</span>
+                            <span style="color: #3498db;">+25 coins</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Marketplace:</span>
+                            <span style="color: #f39c12;">7% fee</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>⚽ AFCON 2025 | Real-time Multiplayer Competitive Penalties | 24 African Nations</p>
+            <p style="margin-top: 10px;">Play to Win • Trade to Earn • Climb the Leaderboard</p>
+        </div>
+    </div>
+
+    <script>
+        const AFCON_TEAMS = {
+            '🇪🇬': 'Egypt',
+            '🇸🇳': 'Senegal',
+            '🇲🇦': 'Morocco',
+            '🇳🇬': 'Nigeria',
+            '🇨🇮': 'Ivory Coast',
+            '🇹🇳': 'Tunisia',
+            '🇦🇱': 'Algeria',
+            '🇨🇲': 'Cameroon',
+            '🇲🇱': 'Mali',
+            '🇿🇦': 'South Africa',
+            '🇧🇫': 'Burkina Faso',
+            '🇨🇩': 'DR Congo',
+            '🇬🇭': 'Ghana',
+            '🇬🇦': 'Gabon',
+            '🇰🇪': 'Kenya',
+            '🇺🇬': 'Uganda',
+            '🇹🇿': 'Tanzania',
+            '🇬🇳': 'Guinea',
+            '🇿🇲': 'Zambia',
+            '🇿🇼': 'Zimbabwe',
+            '🇦🇴': 'Angola',
+            '🇧🇯': 'Benin',
+            '🇬🇶': 'Equatorial Guinea'
+        };
+
+        const PAYMENT_LINKS = {
+            stripe: 'https://buy.stripe.com/YOUR_STRIPE_LINK',
+            binance: 'https://pay.binance.com/YOUR_BINANCE_LINK',
+            revolut: 'https://revolut.me/YOUR_REVOLUT_HANDLE'
+        };
+
+        let gameState = {
+            selectedNation: '',
+            totalCoins: 0,
+            cards: [],
+            globalRank: 9999,
+            winStreak: 0,
+            wins: 0,
+            losses: 0,
+            power: 0,
+            isCharging: false,
+            currentPenalty: 1,
+            myScore: 0,
+            oppScore: 0,
+            matchActive: false,
+            opponent: null,
+            leaderboard: [
+                { rank: 1, name: 'Mohammed', coins: 12500, nation: '🇪🇬' },
+                { rank: 2, name: 'Kwame', coins: 10200, nation: '🇬🇭' },
+                { rank: 3, name: 'Ahmad', coins: 9800, nation: '🇲🇦' },
+                { rank: 4, name: 'Chukwu', coins: 8900, nation: '🇳🇬' },
+                { rank: 5, name: 'Alanis', coins: 7500, nation: '🇸🇳' }
+            ]
+        };
+
+        function updateUI() {
+            document.getElementById('totalCoins').textContent = gameState.totalCoins;
+            document.getElementById('cardsOwned').textContent = gameState.cards.length;
+            document.getElementById('winStreak').textContent = gameState.winStreak;
+            document.getElementById('globalRank').textContent = gameState.globalRank > 1000 ? '#--' : '#' + gameState.globalRank;
+            document.getElementById('streakNum').textContent = gameState.winStreak;
+            updateLeaderboard();
+            localStorage.setItem('afconGameState', JSON.stringify(gameState));
+        }
+
+        function updateLeaderboard() {
+            let html = '';
+            gameState.leaderboard.forEach((player, idx) => {
+                let badgeClass = '';
+                if (idx === 0) badgeClass = 'gold';
+                if (idx === 1) badgeClass = 'silver';
+                if (idx === 2) badgeClass = 'bronze';
+                html += `
+                    <div class="leaderboard-item">
+                        <span class="rank-badge ${badgeClass}">${idx + 1}</span>
+                        <div class="player-name">${player.nation} ${player.name}</div>
+                        <div class="player-coins">${player.coins}</div>
+                    </div>
+                `;
+            });
+            document.getElementById('leaderboardList').innerHTML = html;
+        }
+
+        function selectNation(nation) {
+            if (!nation) return;
+            gameState.selectedNation = nation;
+            document.getElementById('pitch').style.display = 'flex';
+            document.getElementById('gameContainer').style.display = 'block';
+            startMatch();
+            updateUI();
+        }
+
+        function startMatch() {
+            const nations = Object.keys(AFCON_TEAMS).filter(n => n !== gameState.selectedNation);
+            const randomNation = nations[Math.floor(Math.random() * nations.length)];
+            gameState.opponent = {
+                nation: randomNation,
+                name: ['Striker', 'Champion', 'Legend'][Math.floor(Math.random() * 3)],
+                rank: Math.floor(Math.random() * 1000) + 1
+            };
+            gameState.myScore = 0;
+            gameState.oppScore = 0;
+            gameState.currentPenalty = 1;
+            gameState.power = 0;
+            gameState.matchActive = true;
+            document.getElementById('powerFill').style.width = '0%';
+        }
+
+        function chargeStart() {
+            if (!gameState.matchActive) return;
+            gameState.isCharging = true;
+            let increasing = true;
+            const chargeInterval = setInterval(() => {
+                if (gameState.isCharging) {
+                    if (increasing) {
+                        gameState.power += 2.5;
+                        if (gameState.power >= 100) increasing = false;
+                    } else {
+                        gameState.power -= 2.5;
+                        if (gameState.power <= 0) increasing = true;
+                    }
+                    document.getElementById('powerFill').style.width = gameState.power + '%';
+                } else {
+                    clearInterval(chargeInterval);
+                }
+            }, 30);
+        }
+
+        function chargeEnd() {
+            if (!gameState.isCharging) return;
+            gameState.isCharging = false;
+            shoot();
+        }
+
+        function shoot() {
+            const power = gameState.power;
+            const accuracy = 30 + Math.random() * (70 - Math.abs(50 - power) * 0.5);
+            const isGoal = accuracy > 40;
+            const keeper = document.getElementById('keeper');
+            const resultMsg = document.getElementById('resultMessage');
+            let message = '';
+            let coinEarned = 0;
+
+            if (isGoal) {
+                gameState.myScore++;
+                keeper.classList.add('save');
+                if (accuracy > 75) {
+                    message = '⭐ PERFECT SHOT! +150';
+                    coinEarned = 150;
+                } else if (accuracy > 60) {
+                    message = '⚽ GOAL! +100';
+                    coinEarned = 100;
+                } else {
+                    message = '✓ GOAL! +75';
+                    coinEarned = 75;
+                }
+                resultMsg.className = 'result-message show goal';
+                setTimeout(() => keeper.classList.remove('save'), 500);
+            } else {
+                message = '❌ SAVED! +25';
+                coinEarned = 25;
+                resultMsg.className = 'result-message show miss';
+            }
+
+            gameState.totalCoins += coinEarned;
+            resultMsg.textContent = message;
+
+            setTimeout(() => {
+                const aiAccuracy = 30 + Math.random() * 60;
+                if (aiAccuracy > 40) gameState.oppScore++;
+                resultMsg.classList.remove('show');
+
+                if (gameState.currentPenalty < 3) {
+                    gameState.currentPenalty++;
+                    document.getElementById('penaltyNumber').textContent = gameState.currentPenalty;
+                    gameState.power = 0;
+                    document.getElementById('powerFill').style.width = '0%';
+                } else {
+                    endMatch();
+                }
+                updateUI();
+            }, 1500);
+        }
+
+        function endMatch() {
+            gameState.matchActive = false;
+            const resultMsg = document.getElementById('resultMessage');
+            let message = '';
+
+            if (gameState.myScore > gameState.oppScore) {
+                message = `🏆 VICTORY! ${gameState.myScore}-${gameState.oppScore} +100`;
+                resultMsg.className = 'result-message show great';
+                gameState.wins++;
+                gameState.winStreak++;
+                gameState.totalCoins += 100;
+            } else if (gameState.myScore < gameState.oppScore) {
+                message = `😢 DEFEAT ${gameState.myScore}-${gameState.oppScore} +25`;
+                resultMsg.className = 'result-message show miss';
+                gameState.losses++;
+                gameState.winStreak = 0;
+                gameState.totalCoins += 25;
+            } else {
+                message = `🤝 DRAW ${gameState.myScore}-${gameState.oppScore} +50`;
+                resultMsg.className = 'result-message show great';
+                gameState.winStreak = 0;
+                gameState.totalCoins += 50;
+            }
+
+            resultMsg.textContent = message;
+            gameState.globalRank = Math.max(1, Math.floor(1000 - gameState.wins * 2));
+
+            setTimeout(() => {
+                if (confirm('Match complete! Play another?')) {
+                    startMatch();
+                } else {
+                    document.getElementById('pitch').style.display = 'none';
+                    document.getElementById('gameContainer').style.display = 'none';
+                    document.getElementById('nationSelect').value = '';
+                }
+            }, 2500);
+
+            updateUI();
+        }
+
+        function switchMode(mode) {
+            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.closest('.mode-btn').classList.add('active');
+            alert(`${mode.toUpperCase()} mode coming soon! Play Penalties now to earn coins.`);
+        }
+
+        function openPayment(provider, amount) {
+            const links = {
+                stripe: 'https://buy.stripe.com/YOUR_STRIPE_LINK',
+                binance: 'https://pay.binance.com/YOUR_BINANCE_LINK',
+                revolut: 'https://revolut.me/YOUR_REVOLUT_HANDLE'
+            };
+
+            if (links[provider].includes('YOUR_')) {
+                alert(`⚙️ Setup Required\n\nAdd your ${provider} payment link:\n\n1. Create ${provider} account\n2. Generate payment link for $${amount}\n3. Email me the link\n4. I'll update the game\n\nFor now, test the game mechanics!`);
+                return;
+            }
+            
+            window.open(links[provider], '_blank');
+        }
+
+        // Load saved state
+        const saved = localStorage.getItem('afconGameState');
+        if (saved) {
+            gameState = { ...gameState, ...JSON.parse(saved) };
+            document.getElementById('nationSelect').value = gameState.selectedNation;
+            if (gameState.selectedNation) {
+                document.getElementById('pitch').style.display = 'flex';
+                document.getElementById('gameContainer').style.display = 'block';
+            }
+        }
+
+        updateUI();
+    </script>
+</body>
+</html>
